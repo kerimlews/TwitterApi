@@ -5,10 +5,12 @@ import com.javalanguagezone.interviewtwitter.service.TweetService;
 import com.javalanguagezone.interviewtwitter.service.TweetService.InvalidTweetException;
 import com.javalanguagezone.interviewtwitter.service.TweetService.UnknownUsernameException;
 import com.javalanguagezone.interviewtwitter.service.dto.TweetDTO;
+
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.Size;
 import java.security.Principal;
 import java.util.Collection;
 
@@ -22,6 +24,7 @@ public class TweetController {
 
   private TweetService tweetService;
 
+  @Autowired
   public TweetController(TweetService tweetService) {
     this.tweetService = tweetService;
   }
@@ -40,6 +43,10 @@ public class TweetController {
   @GetMapping(value = "{username}")
   public Collection<TweetDTO> tweetsFromUser(@PathVariable String username) {
     return tweetService.tweetsFromUser(username);
+  }
+  @GetMapping("/count-tweets")
+  public int numberOfTeweets(Principal principal) {
+    return tweetService.getNumberOfTweets(principal);
   }
 
   @ExceptionHandler

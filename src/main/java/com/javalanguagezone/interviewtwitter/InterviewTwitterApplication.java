@@ -8,7 +8,17 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ComponentScan.Filter;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Component;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 @SpringBootApplication
 public class InterviewTwitterApplication {
@@ -16,7 +26,7 @@ public class InterviewTwitterApplication {
   public static void main(String[] args) {
     SpringApplication.run(InterviewTwitterApplication.class, args);
   }
-
+ 
   @Component
   public static class BootstrapBitcoinEvangelists implements ApplicationRunner {
 
@@ -30,11 +40,11 @@ public class InterviewTwitterApplication {
 
     @Override
     public void run(ApplicationArguments args) {
-      User rogerVer = userRepository.save(new User("rogerkver", "password"));
-      User andreasAntonopoulos = userRepository.save(new User("aantonop", "password"));
-      User vitalikButerin = userRepository.save(new User("VitalikButerin", "password"));
-      User charlieLee = userRepository.save(new User("SatoshiLite", "password"));
-      User satoshiNakamoto = userRepository.save(new User("satoshiNakamoto", "password"));
+      User rogerVer = userRepository.save(new User("rogerkver", "password", "rog", "kver"));
+      User andreasAntonopoulos = userRepository.save(new User("aantonop", "password", "aan", "tonop"));
+      User vitalikButerin = userRepository.save(new User("VitalikButerin", "password", "vitalik", "buterin"));
+      User charlieLee = userRepository.save(new User("SatoshiLite", "password", "satosh", "lite"));
+      User satoshiNakamoto = userRepository.save(new User("satoshiNakamoto", "password", "satosh", "nakomoto"));
 
       vitalikButerin.addFollowing(satoshiNakamoto, rogerVer);
       userRepository.save(vitalikButerin);

@@ -15,6 +15,6 @@ public class TweetDTO {
   public TweetDTO(Tweet tweet) {
     this.id = tweet.getId();
     this.content = tweet.getContent();
-    this.author = tweet.getAuthor().getUsername();
+    this.author = String.join("-", tweet.getAuthor().fullName(), tweet.getAuthor().getUsername());
   }
 }

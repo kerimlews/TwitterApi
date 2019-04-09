@@ -6,11 +6,15 @@ import com.javalanguagezone.interviewtwitter.repository.TweetRepository;
 import com.javalanguagezone.interviewtwitter.repository.UserRepository;
 import com.javalanguagezone.interviewtwitter.service.dto.TweetDTO;
 import lombok.Getter;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
+
+import javax.transaction.Transactional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -20,6 +24,7 @@ public class TweetService {
   private TweetRepository tweetRepository;
   private UserRepository userRepository;
 
+  @Autowired
   public TweetService(TweetRepository tweetRepository, UserRepository userRepository) {
     this.tweetRepository = tweetRepository;
     this.userRepository = userRepository;
@@ -39,6 +44,10 @@ public class TweetService {
     return tweetRepository.findAllByAuthor(user).stream().map(TweetDTO::new).collect(toList());
   }
 
+  public int getNumberOfTweets(Principal principal) { 
+	  return tweetRepository.countByAuthorUsername(principal.getName());
+  }
+  
   public TweetDTO createTweet(String tweetContent, Principal principal) {
     User user = getUser(principal);
     Tweet tweet = new Tweet(tweetContent, user);
@@ -58,7 +67,7 @@ public class TweetService {
       return user;
     throw new UnknownUsernameException(username);
   }
-
+  
   public static class UnknownUsernameException extends RuntimeException {
     @Getter
     private String username;

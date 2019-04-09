@@ -8,11 +8,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.AuthenticationEntryPoint;
-
-import javax.servlet.http.HttpServletResponse;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -30,15 +26,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   protected void configure(AuthenticationManagerBuilder auth) {
     auth.authenticationProvider(authenticationProvider());
   }
-
+  
   @Override
   protected void configure(final HttpSecurity http) throws Exception {
-    http.authorizeRequests()
-      .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-      .anyRequest().authenticated()
-      .and().httpBasic()
-      .and().sessionManagement().sessionCreationPolicy(STATELESS)
-      .and().csrf().disable();
+    http
+	    .authorizeRequests()
+	      .antMatchers(HttpMethod.OPTIONS,  "/**").permitAll()
+	      .antMatchers(HttpMethod.POST, "/registration").permitAll()
+	      .anyRequest().authenticated()
+	      .and().httpBasic()
+	      .and().sessionManagement().sessionCreationPolicy(STATELESS)
+	      .and().csrf().disable();
   }
 
   @Bean

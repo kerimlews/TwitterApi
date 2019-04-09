@@ -1,8 +1,14 @@
 package com.javalanguagezone.interviewtwitter.service;
 
+import com.javalanguagezone.interviewtwitter.domain.Tweet;
 import com.javalanguagezone.interviewtwitter.domain.User;
+import com.javalanguagezone.interviewtwitter.mappers.UserMapper;
+import com.javalanguagezone.interviewtwitter.models.UserRegistrationRequestModel;
+import com.javalanguagezone.interviewtwitter.repository.TweetRepository;
 import com.javalanguagezone.interviewtwitter.repository.UserRepository;
 import com.javalanguagezone.interviewtwitter.service.dto.UserDTO;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,9 +26,12 @@ import static java.util.stream.Collectors.toList;
 public class UserService implements UserDetailsService {
 
   private UserRepository userRepository;
-
-  public UserService(UserRepository userRepository) {
+  private TweetRepository tweetRepository;
+  
+  @Autowired
+  public UserService(UserRepository userRepository, TweetRepository tweetRepository) {
     this.userRepository = userRepository;
+    this.tweetRepository = tweetRepository;
   }
 
   @Override
@@ -31,6 +40,27 @@ public class UserService implements UserDetailsService {
     if(user == null)
       throw new UsernameNotFoundException(username);
     return user;
+  }
+  
+  public int getNumberOfFollowers(Principal principal) {
+	return userRepository.countByFollowersUsername(principal.getName());
+  }
+  public int getNumberOfFollowing(Principal principal) {
+	return userRepository.countByFollowingUsername(principal.getName());
+  }
+  
+  @Transactional
+  public void registerUser(UserRegistrationRequestModel model) {
+	  if(userRepository.existsByUsername(model.getUsername()))
+		  throw new Error("Username already exists");
+	  
+	  User user = UserMapper.map(model);
+	  
+	  User rogerkver = userRepository.findOneByUsername("rogerkver");
+	  user.addFollowing(rogerkver);
+	  
+	  userRepository.save(user);
+      tweetRepository.save(new Tweet("First tweet!", user));
   }
 
   @Transactional
